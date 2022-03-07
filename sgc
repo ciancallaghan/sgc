@@ -62,16 +62,16 @@ def start(selector, host, port):
     while (True):
         links = browse_map(selector, host, port)
         choice = input("> ")
-        if (choice == "q"):
-            quit()
-        elif (choice.isdigit()):
-            choice = int(choice)
+        if (choice == "b"):
+            break
         elif (choice == "g"):
             new_host = input("gopher://")
             start(SELECTOR, new_host, PORT)
             continue
-        elif (choice == "b"):
-            break
+        elif (choice == "q"):
+            quit()
+        elif (choice.isdigit()):
+            choice = int(choice)
         else:
             print("?")
             continue
