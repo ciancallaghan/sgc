@@ -99,6 +99,9 @@ def start(selector, host, port):
             start(item[2], item[3], int(item[4]))
         elif item[0] == "I" or item[0] == "g" or item[0] == "9":
             get_file(item[2], item[3], int(item[4]), item[2])
+        else:
+            print("Haven't Implemented it yet")
+            input("")
 
 def main():
     if (len(sys.argv) > 1):
