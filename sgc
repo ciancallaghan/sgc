@@ -75,7 +75,6 @@ def get_file(selector, host, port, name):
     file1.write(f.read())
     file1.close()
 
-
 def start(selector, host, port):
     while (True):
         links = browse_map(selector, host, port)
