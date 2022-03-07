@@ -1,0 +1,90 @@
+#!/usr/bin/python3
+
+import socket
+import sys
+
+SELECTOR = ''
+HOST = 'zaibatsu.circumlunar.space'
+PORT = 70
+CLRF = '\r\n'
+
+def request(selector, host, port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+    s.send((selector + CLRF).encode('utf-8'))
+    s.shutdown(1)
+    return s.makefile('r')
+
+def browse_map(selector, host, port):
+    f = request(selector, host, port)
+    page = []
+    while (True):
+        line = f.readline()
+        if (not line) or (line == '.'):
+            break
+        else:
+            line = line.strip(CLRF)
+            linetype = line[0]
+            parts = line[1:].split('\t')
+            parts.insert(0, linetype)
+            page.append(parts)
+    f.close()
+    count = 0
+    links = []
+    for i in range(len(page)):
+        line = page[i]
+        if (line[0] == "0") or (line[0] == "1"):
+            links.append(line)
+            print(str(count) + ")\t" + line[1])
+            count = count + 1
+        else:
+            print("\t" + line[1])
+    return links
+
+def browse_text(selector, host, port):
+    f = request(selector, host, port)
+    page = []
+    while (True):
+        line = f.readline()
+        if (not line) or (line == '.'):
+            break
+        else:
+            page.append(line.strip(CLRF))
+    f.close()
+    print("\n---")
+    for i in range(len(page)):
+        print(page[i])
+    print("---\n")
+    input("")
+
+
+def start(selector, host, port):
+    while (True):
+        links = browse_map(selector, host, port)
+        choice = input("> ")
+        if (choice == "q"):
+            quit()
+        elif (choice.isdigit()):
+            choice = int(choice)
+        elif (choice == "g"):
+            new_host = input("gopher://")
+            start(SELECTOR, new_host, PORT)
+            continue
+        elif (choice == "b"):
+            break
+        else:
+            print("?")
+            continue
+        item = links[choice]
+        if item[0] == "0":
+            browse_text(item[2], item[3], int(item[4]))
+        if item[0] == "1":
+            start(item[2], item[3], int(item[4]))
+
+def main():
+    if (len(sys.argv) > 1):
+        start(SELECTOR, sys.argv[1], PORT)
+    else:
+        start(SELECTOR, HOST, PORT)
+
+main()
