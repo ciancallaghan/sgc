@@ -41,7 +41,9 @@ def browse_map(selector, host, port):
     links = []
     for i in range(len(page)):
         line = page[i]
-        if (line[0] == "i"):
+        if (line[0] == "."):
+            continue
+        elif (line[0] == "i"):
             print("\t" + line[1])
         else:
             links.append(line)
